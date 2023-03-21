@@ -3,15 +3,14 @@ clc;
 clear all;
 close all;
 %%    
-
-% FIXME
-% Given a string e.g "WirelessCommunicationSystemsandSecurityEliasKhamisy"
-% make src_str = str of bits
-%  e.g src_str = '010101110110100101110010011001010110110001100101011100110111001101000011011011110110110101101101011101010110111001101001011000110110000101110100011010010110111101101110010100110111100101110011011101000110010101101101011100110110000101101110011001000101001101100101011000110111010101110010011010010111010001111001010001010110110001101001011000010111001101001011011010000110000101101101011010010111001101111001';
-
 % the string is: "WirelessCommunicationSystemsandSecurityEliasKhamisy"
 % Covert to binary we get
-src_str = '010101110110100101110010011001010110110001100101011100110111001101000011011011110110110101101101011101010110111001101001011000110110000101110100011010010110111101101110010100110111100101110011011101000110010101101101011100110110000101101110011001000101001101100101011000110111010101110010011010010111010001111001010001010110110001101001011000010111001101001011011010000110000101101101011010010111001101111001';
+src_str_1 = '010101110110100101110010011001010110110001100101011100110111001101000011011011110110110101101101011101010110111001101001011000110110000101110100011010010110111101101110010100110111100101110011011101000110010101101101011100110110000101101110011001000101001101100101011000110111010101110010011010010111010001111001010001010110110001101001011000010111001101001011011010000110000101101101011010010111001101111001';
+
+str = 'WirelessCommunicationSystemsandSecurityEliasKhamisy';
+% Convert to 8-bit ascii
+str_ascii = dec2bin(double(str), 8);
+src_str = reshape(str_ascii, 1, []);
 
 % 1 sub-frame worth of 64QAM symbols has the src_str repeated 422 time
 input_str = repmat(src_str,1,422); % (1) Input stream
@@ -40,92 +39,39 @@ save ofdm_tx_sym.mat input_str
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % FIXME - make less tedious 
 
+
 % Perform Cyclic Prefix Insertion and write the CP+OFDM symbols into a file
+% 1st
 col = qam64_sf_ifft(:,1); % pick first column of 2048 symbols: 2048x1
 col = transpose(col);
 col_last160 = col(2048-160+1:2048);
 qam64_tx_sym_1 = [col_last160, col];
 save ofdm_tx_sym.mat qam64_tx_sym_1;
+
 % add cyclic check to the remaining 6 symbols
-% 2nd
-col = qam64_sf_ifft(:,2);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_2 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_2;
-% 3rd
-col = qam64_sf_ifft(:,3);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_3 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_3;
-% 4th
-col = qam64_sf_ifft(:,4);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_4 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_4;
-% 5th
-col = qam64_sf_ifft(:,5);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_5 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_5;
-% 6th
-col = qam64_sf_ifft(:,6);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_6 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_6;
-% 7th
-col = qam64_sf_ifft(:,7);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_7 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_7;
+for idx_1=2:7
+    col = qam64_sf_ifft(:,idx_1);
+    col = transpose(col);
+    col_last144 = col(2048-144+1:2048);
+    qam64_tx_sym = [col_last144, col];
+    save ofdm_tx_sym.mat qam64_tx_sym;
+end
+
 % 8th
 col = qam64_sf_ifft(:,8);
 col = transpose(col);
 col_last160 = col(2048-160+1:2048);
 qam64_tx_sym_8 = [col_last160, col];
 save ofdm_tx_sym.mat qam64_tx_sym_8;
+
 % add cyclic check to the remaining 6 symbols
-% 9th
-col = qam64_sf_ifft(:,9);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_9 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_9;
-% 10th
-col = qam64_sf_ifft(:,10);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_10 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_10;
-% 11th
-col = qam64_sf_ifft(:,11);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_11 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_11;
-% 12th
-col = qam64_sf_ifft(:,12);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_12 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_12;
-% 13th
-col = qam64_sf_ifft(:,13);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_13 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_13;
-% 14th
-col = qam64_sf_ifft(:,14);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_14 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_14;
+for idx_1=9:14
+    col = qam64_sf_ifft(:,idx_1);
+    col = transpose(col);
+    col_last144 = col(2048-144+1:2048);
+    qam64_tx_sym = [col_last144, col];
+    save ofdm_tx_sym.mat qam64_tx_sym;
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
