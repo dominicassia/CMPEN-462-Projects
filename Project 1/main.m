@@ -4,9 +4,7 @@ clear all;
 close all;
 %%    
 
-%src_str_1 = '010101110110100101110010011001010110110001100101011100110111001101000011011011110110110101101101011101010110111001101001011000110110000101110100011010010110111101101110010100110111100101110011011101000110010101101101011100110110000101101110011001000101001101100101011000110111010101110010011010010111010001111001010001010110110001101001011000010111001101001011011010000110000101101101011010010111001101111001';
-
-str = 'WirelessCommunicationSystemsandSecurityEliasKhamisy';
+str = 'WirelessCommunicationSystemsandSecurityDominicAssiaEliasKhamisy';
 % Convert to 8-bit ascii
 str_ascii = dec2bin(double(str), 8);
 % Convert to single horz. string
@@ -61,8 +59,8 @@ qam16_dec_vec = transpose(qam16_dec_vec);
 
 qam64_dec_vec = bin2dec(qam64_vec); % convert from binary string to decimal
 qam64_dec_vec = transpose(qam64_dec_vec);
-
-% Constellations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Constellations
 % Init some constants
 a = 1/sqrt(2);
 b = 1/sqrt(10);
@@ -74,37 +72,39 @@ g = 7/sqrt(42);
 
 % BPSK
 bpsk_key = 0:1:1;
-bpsk = [a+a*i, -a-a*i];
+bpsk = [a+a*1i, -a-a*1i];
 bpsk_mod = dictionary(bpsk_key, bpsk); % map key to value
 
 % QPSK
 qpsk_key = 0:1:3;
-qpsk = [a+a*i, a-a*i, -a+a*i, -a-a*i];
+qpsk = [a+a*1i, a-a*1i, -a+a*1i, -a-a*1i];
 qpsk_mod = dictionary(qpsk_key, qpsk); % map key to value
 
 % 16 QAM
 qam_16_key = 0:1:15;
 qam_16 = [...
-     b+b*i,  b+c*i,  c+b*i,  c+c*i,...
-     b-b*i,  b-c*i,  c-b*i,  c-c*i,...
-    -b+b*i, -b+c*i, -c+b*i, -c+c*i,...
-    -b-b*i, -b-c*i, -c-b*i, -c-c*i ...
+     b+b*1i,  b+c*1i,  c+b*1i,  c+c*1i,...
+     b-b*1i,  b-c*1i,  c-b*1i,  c-c*1i,...
+    -b+b*1i, -b+c*1i, -c+b*1i, -c+c*1i,...
+    -b-b*1i, -b-c*1i, -c-b*1i, -c-c*11i ...
 ];
 qam_16_mod = dictionary(qam_16_key, qam_16); % map key to value
 
 % 64 QAM
 qam_64_key = 0:1:63;
 qam_64 = [...
-     e+e*i,  e+d*i,  d+e*i,  d+d*i,  e+f*i,  e+g*i,  d+f*i,  d+g*i,...
-     f+e*i,  f+d*i,  g+e*i,  g+d*i,  f+f*i,  f+g*i,  g+f*i,  g+g*i,...
-     e-e*i,  e-d*i,  d-e*i,  d-d*i,  e-f*i,  e-g*i,  d-f*i,  d-g*i,...
-     f-e*i,  f-d*i,  g-e*i,  g-d*i,  f-f*i,  f-g*i,  g-f*i,  g-g*i,...
-    -e+e*i, -e+d*i, -d+e*i, -d+d*i, -e+f*i, -e+g*i, -d+f*i, -d+g*i,...
-    -f+e*i, -f+d*i, -g+e*i, -g+d*i, -f+f*i, -f+g*i, -g+f*i, -g+g*i,...
-    -e-e*i, -e-d*i, -d-e*i, -d-d*i, -e-f*i, -e-g*i, -d-f*i, -d-g*i,...
-    -f-e*i, -f-d*i, -g-e*i, -g-d*i, -f-f*i, -f-g*i, -g-f*i, -g-g*i ...
+     e+e*1i,  e+d*1i,  d+e*1i,  d+d*1i,  e+f*1i,  e+g*1i,  d+f*1i,  d+g*1i,...
+     f+e*1i,  f+d*1i,  g+e*1i,  g+d*1i,  f+f*1i,  f+g*1i,  g+f*1i,  g+g*1i,...
+     e-e*1i,  e-d*1i,  d-e*1i,  d-d*1i,  e-f*1i,  e-g*1i,  d-f*1i,  d-g*1i,...
+     f-e*1i,  f-d*1i,  g-e*1i,  g-d*1i,  f-f*1i,  f-g*1i,  g-f*1i,  g-g*1i,...
+    -e+e*1i, -e+d*1i, -d+e*1i, -d+d*1i, -e+f*1i, -e+g*1i, -d+f*1i, -d+g*1i,...
+    -f+e*1i, -f+d*1i, -g+e*1i, -g+d*1i, -f+f*1i, -f+g*1i, -g+f*1i, -g+g*1i,...
+    -e-e*1i, -e-d*1i, -d-e*1i, -d-d*1i, -e-f*1i, -e-g*1i, -d-f*1i, -d-g*1i,...
+    -f-e*1i, -f-d*1i, -g-e*1i, -g-d*1i, -f-f*1i, -f-g*1i, -g-f*1i, -g-g*1i ...
 ];
 qam_64_mod = dictionary(qam_64_key ,qam_64); % map key to value
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Modulate
 bpsk_sym_vec  = bpsk_mod(bpsk_dec_vec);    
@@ -130,60 +130,93 @@ save ofdm_tx_sym_qpsk.mat  qpsk_input_str
 save ofdm_tx_sym_qam16.mat qam16_input_str
 save ofdm_tx_sym_qam64.mat qam64_input_str
 
-% Perform Cyclic Prefix Insertion and write the CP+OFDM symbols into a file
-% 1st
-col = qam64_sf_ifft(:,1); % pick first column of 2048 symbols: 2048x1
-col = transpose(col);
-col_last160 = col(2048-160+1:2048);
-qam64_tx_sym_1 = [col_last160, col];
-save ofdm_tx_sym.mat qam64_tx_sym_1;
-
-% 2nd
-col = qam64_sf_ifft(:,2);
-col = transpose(col);
-col_last144 = col(2048-144+1:2048);
-qam64_tx_sym_2 = [col_last144, col];
-save ofdm_tx_sym.mat qam64_tx_sym_2;
-
-% add cyclic check to the remaining 5 symbols
-for idx_1=3:7
-    col = qam64_sf_ifft(:,idx_1);
-    col = transpose(col);
-    col_last144 = col(2048-144+1:2048);
-    qam64_tx_sym = [col_last144, col];
-    save ofdm_tx_sym.mat qam64_tx_sym;
-end
-
-% 8th
-col = qam64_sf_ifft(:,8);
-col = transpose(col);
-col_last160 = col(2048-160+1:2048);
-qam64_tx_sym_8 = [col_last160, col];
-save ofdm_tx_sym.mat qam64_tx_sym_8;
-
-% add cyclic check to the remaining 6 symbols
-for idx_1=9:14
-    col = qam64_sf_ifft(:,idx_1);
-    col = transpose(col);
-    col_last144 = col(2048-144+1:2048);
-    qam64_tx_sym = [col_last144, col];
-    save ofdm_tx_sym.mat qam64_tx_sym;
-end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%% Perform Cyclic Prefix Insertion and write the CP+OFDM symbols into a file
+%% BPSK
+for idx=1:14
+    col = bpsk_sf_ifft(:,idx);
+    col = transpose(col);
+    if idx == 1 || idx == 8
+        eval(sprintf('bpsk_tx_sym_%d = [col(2048-160+1:2048),col];', idx));    
+    else
+        eval(sprintf('bpsk_tx_sym_%d = [col(2048-144+1:2048),col];', idx));
+    end  
+    eval(sprintf('save ofdm_tx_sym.mat bpsk_tx_sym_%d;', idx));
+end
+%% QPSK
+for idx=1:14
+    col = qpsk_sf_ifft(:,idx);
+    col = transpose(col);
+    if idx == 1 || idx == 8
+        eval(sprintf('qpsk_tx_sym_%d = [col(2048-160+1:2048),col];', idx));    
+    else
+        eval(sprintf('qpsk_tx_sym_%d = [col(2048-144+1:2048),col];', idx));
+    end  
+    eval(sprintf('save ofdm_tx_sym.mat qpsk_tx_sym_%d;', idx));
+end
+%% 16QAM
+for idx=1:14
+    col = qam16_sf_ifft(:,idx);
+    col = transpose(col);
+    if idx == 1 || idx == 8
+        eval(sprintf('qam16_tx_sym_%d = [col(2048-160+1:2048),col];', idx));    
+    else
+        eval(sprintf('qam16_tx_sym_%d = [col(2048-144+1:2048),col];', idx));
+    end  
+    eval(sprintf('save ofdm_tx_sym.mat qam16_tx_sym_%d;', idx));
+end
+%% 64QAM
+for idx=1:14
+    col = qam64_sf_ifft(:,idx);
+    col = transpose(col);
+    if idx == 1 || idx == 8
+        eval(sprintf('qam64_tx_sym_%d = [col(2048-160+1:2048),col];', idx));    
+    else
+        eval(sprintf('qam64_tx_sym_%d = [col(2048-144+1:2048),col];', idx));
+    end  
+    eval(sprintf('save ofdm_tx_sym.mat qam64_tx_sym_%d;', idx));
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Plot
 % Generate time scaled plot of OFDM transmit symbols sym_1 and sym_2
 % First we create a time vector with Ts=1/fs, with length equal to the sum
 % of the two symbol lengths
 fs = 30.72e6; % 30.72MHz frequency
 dt = 1 / fs;
 T = (0 : 2048+160+2048+144-1) * dt;
-symbol = [qam64_tx_sym_1, qam64_tx_sym_2];
-% symbol = reshape(repmat(symbol(:).',10,1),1,[]);
+
+bpsk_symbol = [bpsk_tx_sym_1, bpsk_tx_sym_2];
+qpsk_symbol = [qpsk_tx_sym_1, qpsk_tx_sym_2];
+qam16_symbol = [qam16_tx_sym_1, qam16_tx_sym_2];
+qam64_symbol = [qam64_tx_sym_1, qam64_tx_sym_2];
+
 figure
-subplot(2,1,1)
-plot(T, abs(symbol))
-title('Amplitude')
-subplot(2,1,2)
-plot(T, angle(symbol))
-title('Phase')
+subplot(4,2,1)
+plot(T,real(qam64_symbol));
+title('64QAM I(t)');
+subplot(4,2,2)
+plot(T,imag(qam64_symbol));
+title('64QAM Q(t)');
+
+subplot(4,2,3)
+plot(T,real(qam16_symbol));
+title('16QAM I(t)');
+subplot(4,2,4)
+plot(T,imag(qam16_symbol));
+title('16QAM Q(t)');
+
+subplot(4,2,5)
+plot(T,real(qpsk_symbol));
+title('QPSK I(t)');
+subplot(4,2,6)
+plot(T,imag(qpsk_symbol));
+title('QPSK Q(t)');
+
+subplot(4,2,7)
+plot(T,real(bpsk_symbol));
+title('BPSK I(t)');
+subplot(4,2,8)
+plot(T,imag(bpsk_symbol));
+title('BPSK Q(t)');
+
+sgtitle("Two Transmit OFDM Symbols")
