@@ -12,8 +12,11 @@ f = 5/sqrt(42);
 g = 7/sqrt(42);
 
 % Init constellations
+bpsk_key = 0:1:1;
 bpsk = [a+a, -a-a];
+qpsk_key = 0:1:3;
 qpsk = [a+a, a-a, -a+a, -a-a];
+qam_16_key = 0:1:15;
 qam_16 = [...
     b+b, b+c, c+b, c+c,...
     b-b, b-c, c-b, c-c,...
@@ -29,7 +32,10 @@ qam_64 = [...
     -f+e, -f+d, -g+e, -g+d, -f+f, -f+g, -g+f, -g+g,...
     -e-e, -e-d, -d-e, -d-d,-e-f, -e-g, -d-f, -d-g,...
     -f-e, -f-d, -g-e, -g-d,-f-f, -f-g, -g-f, -g-g];
-qam_64_mod = dictionary(qam_64_key ,qam_64);
+bpsk_mod = dictionary(bpsk_key, bpsk);
+qpsk_mod = dictionary(qpsk_key, qpsk);
+qam_16_mod = dictionary(qam_16_key, qam_16);
+qam_64_mod = dictionary(qam_64_key, qam_64);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
