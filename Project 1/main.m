@@ -2,26 +2,21 @@
 clc;
 clear all;
 close all;
-%%    
 
 str = 'WirelessCommunicationSystemsandSecurityDominicAssiaEliasKhamisy';
-% Convert to 8-bit ascii
-str_ascii = dec2bin(double(str), 8);
+str_ascii = dec2bin(double(str), 8); % Convert to 8-bit ascii
 % Convert to single horz. string
 src_str = '';
 for str_idx=1:length(str_ascii)
-    src_str = strcat(src_str, str_ascii(str_idx, :));
+src_str = strcat(src_str, str_ascii(str_idx, :));
 end
 
-% Repeat src_str so we have 1 sub-frame worth of symbols. (1) Input Stream
-% BPSK
-bpsk_input_str = repmat(src_str, 1, ceil( (2048*14*1)/(length(str)*8) ));
-% QPSK
-qpsk_input_str = repmat(src_str, 1, ceil( (2048*14*2)/(length(str)*8) ));
-% 16 QAM
-qam16_input_str = repmat(src_str, 1, ceil( (2048*14*4)/(length(str)*8) ));
-% 64 QAM
-qam64_input_str = repmat(src_str, 1, ceil( (2048*14*6)/(length(str)*8) ));
+%% (1) Input Stream
+% Repeat src_str so we have 1 sub-frame worth of symbols. 
+bpsk_input_str = repmat(src_str, 1, ceil( (2048*14*1)/(length(str)*8) )); % BPSK 28728
+qpsk_input_str = repmat(src_str, 1, ceil( (2048*14*2)/(length(str)*8) )); % QPSK 57456
+qam16_input_str = repmat(src_str, 1, ceil( (2048*14*4)/(length(str)*8) )); % 16 QAM
+qam64_input_str = repmat(src_str, 1, ceil( (2048*14*6)/(length(str)*8) )); % 64 QAM
 
 % Split input_str into equal size strings
 % BPSK
@@ -102,7 +97,7 @@ qam_64 = [...
     -e-e*1i, -e-d*1i, -d-e*1i, -d-d*1i, -e-f*1i, -e-g*1i, -d-f*1i, -d-g*1i,...
     -f-e*1i, -f-d*1i, -g-e*1i, -g-d*1i, -f-f*1i, -f-g*1i, -g-f*1i, -g-g*1i ...
 ];
-qam_64_mod = dictionary(qam_64_key ,qam_64); % map key to value
+qam_64_mod = dictionary(qam_64_key, qam_64); % map key to value
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -132,50 +127,57 @@ save ofdm_tx_sym_qam64.mat qam64_input_str
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Perform Cyclic Prefix Insertion and write the CP+OFDM symbols into a file
-%% BPSK
+
+%% Calculation for CP size
+%   Given: sample rate of fs = 30.72MHz and sub-carrier bandwidth of 15kHz
+%   To add the Cyclic Prefix we follow this calculation:
+    %   After IFFT we serialize the OFDM symbols. 
+    %   There are total of 2048 symbols coming out of IFFT
+    %   Since each OFDM symbol is at 15KHz,
+    %       when we serialize the bandwidth is 2048x15KHz = 30.72MHz
+    %   The time slot corresponding to 30.72MHz is 
+    %       1/30.72MHz = 0.032552083usec 
+    %   This is how much time each symbol takes to send after serialized
+    %   Hence, for 5.2usec we get 5.2/0.032552083 = 159.744 -> 160
+    %   And, 4.7usec we get 144.384 -> 144
+%   To add Cyclic Prefix we do the following in each slot of 7 by 2048
+    %   For the first 2048 symbols in a slot we add 160 symbols equal
+    %       to the symbols 2047-160+1 to 2047
+    %   For the rest of the 6 2048 symbols in a slot we add 144 symbols
+    %       equal to the symbols 2047-144+1 to 2047
+
 for idx=1:14
-    col = bpsk_sf_ifft(:,idx);
-    col = transpose(col);
+    bpsk_col = bpsk_sf_ifft(:,idx);
+    bpsk_col = transpose(bpsk_col);
+
+    qpsk_col = qpsk_sf_ifft(:,idx);
+    qpsk_col = transpose(qpsk_col);
+
+    qam16_col = qam16_sf_ifft(:,idx);
+    qam16_col = transpose(qam16_col);
+    
+    qam64_col = qam64_sf_ifft(:,idx);
+    qam64_col = transpose(qam64_col);
+
     if idx == 1 || idx == 8
-        eval(sprintf('bpsk_tx_sym_%d = [col(2048-160+1:2048),col];', idx));    
+        eval(sprintf('bpsk_tx_sym_%d = [bpsk_col(2048-160+1:2048),bpsk_col];', idx)); % BPSK
+        eval(sprintf('qpsk_tx_sym_%d = [qpsk_col(2048-160+1:2048),qpsk_col];', idx)); % QPSK
+        eval(sprintf('qam16_tx_sym_%d = [qam16_col(2048-160+1:2048),qam16_col];', idx)); % 16QAM
+        eval(sprintf('qam64_tx_sym_%d = [qam64_col(2048-160+1:2048),qam64_col];', idx)); % 64QAM
     else
-        eval(sprintf('bpsk_tx_sym_%d = [col(2048-144+1:2048),col];', idx));
-    end  
-    eval(sprintf('save ofdm_tx_sym.mat bpsk_tx_sym_%d;', idx));
+        eval(sprintf('bpsk_tx_sym_%d = [bpsk_col(2048-144+1:2048),bpsk_col];', idx)); % BPSK
+        eval(sprintf('qpsk_tx_sym_%d = [qpsk_col(2048-144+1:2048),qpsk_col];', idx)); % QPSK
+        eval(sprintf('qam16_tx_sym_%d = [qam16_col(2048-144+1:2048),qam16_col];', idx)); % 16QAM
+        eval(sprintf('qam64_tx_sym_%d = [qam64_col(2048-144+1:2048),qam64_col];', idx)); % 64QAM
+
+    end
+    % Save
+    eval(sprintf('save ofdm_tx_sym.mat bpsk_tx_sym_%d;', idx)); % BPSK
+    eval(sprintf('save ofdm_tx_sym.mat qpsk_tx_sym_%d;', idx)); % QPSK
+    eval(sprintf('save ofdm_tx_sym.mat qam16_tx_sym_%d;', idx)); % 16QAM
+    eval(sprintf('save ofdm_tx_sym.mat qam64_tx_sym_%d;', idx)); % 64QAM
 end
-%% QPSK
-for idx=1:14
-    col = qpsk_sf_ifft(:,idx);
-    col = transpose(col);
-    if idx == 1 || idx == 8
-        eval(sprintf('qpsk_tx_sym_%d = [col(2048-160+1:2048),col];', idx));    
-    else
-        eval(sprintf('qpsk_tx_sym_%d = [col(2048-144+1:2048),col];', idx));
-    end  
-    eval(sprintf('save ofdm_tx_sym.mat qpsk_tx_sym_%d;', idx));
-end
-%% 16QAM
-for idx=1:14
-    col = qam16_sf_ifft(:,idx);
-    col = transpose(col);
-    if idx == 1 || idx == 8
-        eval(sprintf('qam16_tx_sym_%d = [col(2048-160+1:2048),col];', idx));    
-    else
-        eval(sprintf('qam16_tx_sym_%d = [col(2048-144+1:2048),col];', idx));
-    end  
-    eval(sprintf('save ofdm_tx_sym.mat qam16_tx_sym_%d;', idx));
-end
-%% 64QAM
-for idx=1:14
-    col = qam64_sf_ifft(:,idx);
-    col = transpose(col);
-    if idx == 1 || idx == 8
-        eval(sprintf('qam64_tx_sym_%d = [col(2048-160+1:2048),col];', idx));    
-    else
-        eval(sprintf('qam64_tx_sym_%d = [col(2048-144+1:2048),col];', idx));
-    end  
-    eval(sprintf('save ofdm_tx_sym.mat qam64_tx_sym_%d;', idx));
-end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Plot
 % Generate time scaled plot of OFDM transmit symbols sym_1 and sym_2
