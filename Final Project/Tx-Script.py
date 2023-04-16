@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # Libraries
 ######################
 from hashlib import sha512      # https://docs.python.org/3/library/hashlib.html
