@@ -52,3 +52,6 @@ plot(t, fft(waveform));
 
 % Play waveform
 sound(waveform, fs);
+
+% Save waveform
+audiowrite("waveform.wav", waveform, fs);
