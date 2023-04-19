@@ -1,3 +1,7 @@
+clc;
+clear all;
+close all;
+
 %%%%%%%%%%%%%%%  Init.  %%%%%%%%%%%%%%%  
 
 % SSRG, f(x) = x^11 + x^2 + 1
@@ -8,8 +12,8 @@
 % GF(512) = GF(2^9)
 n = 9;
 
-% 15kHz frequency
-f = 15e3;
+% 1kHz frequency
+f = 1e3;
 
 % 44.1kHz sample rate
 fs = 44.1e3;
@@ -23,15 +27,6 @@ shift_reg(1) = 1;
 
 % Output sequence
 pn_sequence = zeros(1,2^n);
-
-% Modulation (QPSK)
-a = pi/4;
-qpsk_key = 0 : 1 : 3;
-qpsk = [1*a, 3*a, 5*a, 7*a];
-qpsk_mod = dictionary(qpsk_key, qpsk); % map key to value
-
-% Modulated sequence
-qpsk_pn_seq = zeros(1,(2^n)/2);
 
 % Reference carrier
 carrier = cos(2*pi*f*t);
@@ -56,30 +51,54 @@ qpsk_vec = transpose( reshape(pn_sequence, 2, []));
 for i = 1 : (2^n)/2
     A = num2str(qpsk_vec(i,1));
     B = num2str(qpsk_vec(i,2));
-    qpsk_pn_seq(i) = bin2dec( strcat(A, B));
+    % Convert to dec for qpsk
+    qpsk_dec_vec(i) = bin2dec( strcat(A, B));
 end
 
-% Modulate
-phase = qpsk_mod(qpsk_pn_seq);
+% Modulate (method 1)
+waveform = pskmod(qpsk_dec_vec', 4);
 
-% Create waveform
-waveform = cos(2*pi*f*t + phase);
+% Modulate (method 2)
+a = sqrt(2)/2;
+qpsk_key = 0 : 1 : 3;
+qpsk = [1*a, 3*a, 5*a, 7*a];
+qpsk_mod = dictionary(qpsk_key, qpsk); % map key to value
+phase = qpsk_mod(qpsk_dec_vec);
+%waveform = cos(2*pi*f*t + phase);
+
+%%%%%%%%%%%%%%%  Plot  %%%%%%%%%%%%%%%
+figure;
 
 % Plot carrier
-subplot(5,1,1);
+subplot(2, 2, 1);
 plot(t, carrier);
+title('Carrier');
+
 % Plot waveform
-subplot(5,1,2);
+subplot(2, 2, 2);
 plot(t, waveform);
+title('Modulated Waveform / PN Sequence');
+
 % Plot carrier spectrum
-subplot(5,1,3);
+subplot(2, 2, 3);
 plot(t, fft(carrier));
+title('Carrier Spectrum');
+
 % Plot waveform spectrum
-subplot(5,1,4);
+subplot(2, 2, 4);
 plot(t, fft(waveform));
+title('Waveform Spectrum');
+
+figure;
+% Plot PN sequence
+stairs(t, pn_sequence(1:256));
+ylim([-2, 2]);
+title('PN Sequence');
+
+%%%%%%%%%%%%%%%  Play, Save  %%%%%%%%%%%%%%%
 
 % Play waveform
-sound(waveform, fs);
+sound(real(waveform), fs);
 
 % Save waveform
-audiowrite("waveform.wav", waveform, fs);
+audiowrite("waveform.wav", real(waveform), fs);
