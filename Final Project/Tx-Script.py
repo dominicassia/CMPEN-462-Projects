@@ -3,6 +3,7 @@
 # References
 # Sockets: https://docs.python.org/3/library/socket.html
 # Crypto:  https://pycryptodome.readthedocs.io/en/latest/src/cipher/aes.html
+#   pip install pycryptodome
 # Hash:    https://docs.python.org/3/library/hashlib.html
 # DH KeyE: https://cryptography.io/en/latest/hazmat/primitives/asymmetric/dh/
 
@@ -15,38 +16,18 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.serialization.Encoding import Encoding
 import RPi.GPIO as GPIO
 
+'''
+    data = 'Hello world'
+    hash_obj = sha512()
+    hash_obj.update(bytes(data))
+    send(comm_obj, hash_obj.digest())
+'''
+
 IP = "127.0.0.1"
 PORT = 65432
 
 PRINT = True    # Toggle print statements
 
-def create_socket():
-    ''' Creates and returns socket object '''
-
-    if PRINT: print("Creating socket...\n") 
-
-    # Create socket object: TCP, IPv4
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-    # Bind socket to IP, Port
-    s.bind((IP, PORT))
-
-    return s
-
-def server(socket):
-    ''' Creates a server from given socket, listens for connecections and returns connection '''
-
-    if PRINT: print("Listening for connection requests...\n")
-
-    # Listen for connections
-    socket.listen()
-
-    # Blocks, waits for connection
-    connection, address = socket.accept()
-
-    if PRINT: print(f"Connected to: {address}\n")
-
-    return connection
 
 def key_exchange(connection):
     ''' Takes in socket and '''
